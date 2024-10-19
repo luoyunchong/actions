@@ -1,18 +1,12 @@
-﻿using System.Web;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Octokit;
 
-public class AppOption
-{
-    public string AppPrivateKey { get; set; }
-    public int AppIntegrationId { get; set; }
-    public int InstallationId { get; set; }
-    public string Owner { get; set; }
-    public string Repo { get; set; }
-}
+namespace Hackernews.Daily;
+
 public class App
 {
     private readonly ILogger<App> _logger;
@@ -30,8 +24,9 @@ public class App
     public async Task RunAsync(string[] args)
     {
         string content = await GetHeadlines(DateTime.UtcNow);
-        var moviesApiKey = _config["Movies:ServiceApiKey"];
         _logger.LogInformation(content);
+
+        _logger.LogInformation(JsonConvert.SerializeObject(_appOption));
 
         var jwtToken = GetAccessTokenn();
 
@@ -59,12 +54,12 @@ public class App
         _logger.LogInformation($"Issue locked: {issue.HtmlUrl}");
 
     }
-    public  string Base64Decode(string base64EncodedData)
+    public string Base64Decode(string base64EncodedData)
     {
         var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
         return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
     }
-    private  string GetAccessTokenn()
+    private string GetAccessTokenn()
     {
         var generator = new GitHubJwt.GitHubJwtFactory(
             new GitHubJwt.StringPrivateKeySource(Base64Decode(_appOption.AppPrivateKey)),
@@ -112,7 +107,7 @@ public class App
             return $"{i + 1}. **[{title}]({url})**\n{points} points by [{author}](https://news.ycombinator.com/user?id={author}) {createdAt} | [{numComments} comments](https://news.ycombinator.com/item?id={objectID})\n";
         }).Aggregate((current, next) => current + next);
 
-        return $"{contents}\n<p align=\"right\"><a href=\"https://github.com/luoyunchong/Hackernews\"> <i>❤️ Sponsor the author</i></a> </p>\n";
+        return $"{contents}\n<p align=\"right\"><a href=\"https://github.com/{_appOption.Owner}/{_appOption.Repo}\"> <i>❤️ Sponsor the author</i></a> </p>\n";
 
     }
 }
