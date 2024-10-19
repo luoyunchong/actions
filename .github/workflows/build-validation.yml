@@ -1,8 +1,10 @@
 name: build
 
 on:
+  workflow_dispatch:
   schedule:
-  - cron: "1 0 * * *"
+     - cron: "1 0 * * *"
+
 
 env:
   DOTNET_VERSION: "8.0.403" # The .NET SDK version to use
