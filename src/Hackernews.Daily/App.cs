@@ -12,13 +12,11 @@ public class App
     private readonly ILogger<App> _logger;
     private readonly IHttpClientFactory _clientFactory;
     private readonly AppOption _appOption;
-    private readonly IConfiguration _config;
-    public App(ILogger<App> logger, IOptions<AppOption> appOption, IHttpClientFactory clientFactory, IConfiguration config)
+    public App(ILogger<App> logger, IOptionsMonitor<AppOption> appOption, IHttpClientFactory clientFactory)
     {
         _logger = logger;
         _clientFactory = clientFactory;
-        _config = config;
-        _appOption = appOption.Value;
+        _appOption = appOption.CurrentValue;
     }
 
     public async Task RunAsync(string[] args)
