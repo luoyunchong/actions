@@ -28,6 +28,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Run
-        run: cd src/Hackernews.Daily & dotnet run --project Hackernews.Daily.csproj
+        run: dotnet run --project Hackernews.Daily.csproj
+        working-directory: src/Hackernews.Daily/
         env:
             AppOption__AppPrivateKey: ${{ secrets.AppPrivateKey }}

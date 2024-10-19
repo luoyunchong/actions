@@ -29,7 +29,7 @@ static IHost AppStartup(string[] args)
         })
         .ConfigureAppConfiguration((host, config) =>
         {
-            config.AddJsonFile($"settings.json", optional: true, reloadOnChange: true);
+            
         })
         .UseSerilog()
         .Build(); // Build the Host
