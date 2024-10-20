@@ -32,3 +32,4 @@ jobs:
         working-directory: src/Hackernews.Daily/
         env:
             AppOption__AppPrivateKey: ${{ secrets.AppPrivateKey }}
+            AppOption__HacknewsType: "Daily"

@@ -1,0 +1,35 @@
+name: build
+
+on:
+  workflow_dispatch:
+  schedule:
+     - cron: "1 0 1 * *"
+
+
+env:
+  DOTNET_VERSION: "8.0.403" # The .NET SDK version to use
+
+jobs:
+  build:
+    name: build-${{matrix.os}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run
+        run: dotnet run --project Hackernews.Daily.csproj
+        working-directory: src/Hackernews.Daily/
+        env:
+            AppOption__AppPrivateKey: ${{ secrets.AppPrivateKey }}
+            AppOption__HacknewsType: "Monthly"

@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Octokit;
 
-namespace Hackernews.Daily;
+namespace HackerNews;
 
 public class App
 {
@@ -26,7 +25,7 @@ public class App
 
         _logger.LogInformation(JsonConvert.SerializeObject(_appOption));
 
-        var jwtToken = GetAccessTokenn();
+        var jwtToken = GetAccessToken();
 
         var appClient = new GitHubClient(new ProductHeaderValue(_appOption.Repo))
         {
@@ -40,7 +39,21 @@ public class App
             Credentials = new Credentials(response.Token)
         };
 
-        var createIssue = new NewIssue($"Hacker News Daily Top 10 {DateTime.Now:yyyy-MM-dd}")
+        string title = $"Hacker News Top 10 {DateTime.Now:yyyy-MM-dd}";
+        switch (_appOption.HacknewsType)
+        {
+            case HacknewsType.Daily:
+                title = $"Hacker News Daily Top 10 {DateTime.Now:yyyy-MM-dd}";
+                break;
+            case HacknewsType.Weekly:
+                title = $"Hacker News Weekly Top 10 {DateTime.Now:yyyy-MM-dd}";
+                break;
+            case HacknewsType.Monthly:
+                title = $"Hacker News Monthly Top 10 {DateTime.Now:yyyy-MM-dd}";
+                break;
+        }
+
+        var createIssue = new NewIssue(title)
         {
             Body = content
         };
@@ -57,14 +70,14 @@ public class App
         var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
         return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
     }
-    private string GetAccessTokenn()
+    private string GetAccessToken()
     {
         var generator = new GitHubJwt.GitHubJwtFactory(
             new GitHubJwt.StringPrivateKeySource(Base64Decode(_appOption.AppPrivateKey)),
             new GitHubJwt.GitHubJwtFactoryOptions
             {
-                AppIntegrationId = _appOption.AppIntegrationId, // The GitHub App Id
-                ExpirationSeconds = 600 // 10 minutes is the maximum time allowed
+                AppIntegrationId = _appOption.AppIntegrationId,
+                ExpirationSeconds = 600
             }
         );
         var jwtToken = generator.CreateEncodedJwtToken();
@@ -78,6 +91,20 @@ public class App
 
         long endTime = new DateTimeOffset(date).ToUnixTimeSeconds();
         long startTime = endTime - (25 * 60 * 60);
+
+        switch (_appOption.HacknewsType)
+        {
+            case HacknewsType.Daily:
+                startTime = endTime - (25 * 60 * 60);
+                break;
+            case HacknewsType.Weekly:
+                startTime = endTime - (7 * 24 * 60 * 60 + 12 * 60 * 60);
+                break;
+            case HacknewsType.Monthly:
+                startTime = endTime - (31 * 24 * 60 * 60 + 12 * 60 * 60);
+                break;
+            default: break;
+        }
 
         string url = $"https://hn.algolia.com/api/v1/search?numericFilters=created_at_i>{startTime},created_at_i<{endTime}";
         HttpResponseMessage response = await client.GetAsync(url);

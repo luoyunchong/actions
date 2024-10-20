@@ -1,7 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Hackernews.Daily;
-using Microsoft.Extensions.Configuration;
+﻿using HackerNews;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
