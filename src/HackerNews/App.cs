@@ -40,16 +40,27 @@ public class App
         };
 
         string title = $"Hacker News Top 10 {DateTime.Now:yyyy-MM-dd}";
+
+        var labels = new Dictionary<string, string>()
+        {
+            {"hacker-news-daily", "#EB1081"},
+            {"hacker-news-weekly", "#D93F0B"},
+            {"hacker-news-monthly", "#0052CC"}
+        };
+        var label = "";
         switch (_appOption.HacknewsType)
         {
             case HacknewsType.Daily:
                 title = $"Hacker News Daily Top 10 {DateTime.Now:yyyy-MM-dd}";
+                label = "hacker-news-daily";
                 break;
             case HacknewsType.Weekly:
                 title = $"Hacker News Weekly Top 10 {DateTime.Now:yyyy-MM-dd}";
+                label = "hacker-news-weekly";
                 break;
             case HacknewsType.Monthly:
                 title = $"Hacker News Monthly Top 10 {DateTime.Now:yyyy-MM-dd}";
+                label = "hacker-news-monthly";
                 break;
         }
 
@@ -60,6 +71,11 @@ public class App
 
         var issue = await installationClient.Issue.Create(_appOption.Owner, _appOption.Repo, createIssue);
         _logger.LogInformation($"Issue created: {issue.HtmlUrl}");
+
+        if (labels.ContainsKey(label))
+        {
+            await installationClient.Issue.Labels.Create(_appOption.Owner, _appOption.Repo, new NewLabel(label, labels[label]));
+        }
 
         await installationClient.Issue.LockUnlock.Lock(_appOption.Owner, _appOption.Repo, issue.Number);
         _logger.LogInformation($"Issue locked: {issue.HtmlUrl}");
