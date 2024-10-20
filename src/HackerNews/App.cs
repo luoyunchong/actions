@@ -43,9 +43,9 @@ public class App
 
         var labels = new Dictionary<string, string>()
         {
-            {"hacker-news-daily", "#EB1081"},
-            {"hacker-news-weekly", "#D93F0B"},
-            {"hacker-news-monthly", "#0052CC"}
+            {"hacker-news-daily", "EB1081"},
+            {"hacker-news-weekly", "D93F0B"},
+            {"hacker-news-monthly", "0052CC"}
         };
         var label = "";
         switch (_appOption.HacknewsType)
