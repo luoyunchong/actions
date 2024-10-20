@@ -41,12 +41,6 @@ public class App
 
         string title = $"Hacker News Top 10 {DateTime.Now:yyyy-MM-dd}";
 
-        var labels = new Dictionary<string, string>()
-        {
-            {"hacker-news-daily", "EB1081"},
-            {"hacker-news-weekly", "D93F0B"},
-            {"hacker-news-monthly", "0052CC"}
-        };
         var label = "";
         switch (_appOption.HacknewsType)
         {
@@ -72,9 +66,9 @@ public class App
         var issue = await installationClient.Issue.Create(_appOption.Owner, _appOption.Repo, createIssue);
         _logger.LogInformation($"Issue created: {issue.HtmlUrl}");
 
-        if (labels.ContainsKey(label))
+        if (!string.IsNullOrWhiteSpace(label))
         {
-            await installationClient.Issue.Labels.Create(_appOption.Owner, _appOption.Repo, new NewLabel(label, labels[label]));
+            await installationClient.Issue.Labels.AddToIssue(_appOption.Owner, _appOption.Repo, issue.Number, new[] { label });
         }
 
         await installationClient.Issue.LockUnlock.Lock(_appOption.Owner, _appOption.Repo, issue.Number);
