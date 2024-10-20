@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Hackernews.Daily": {
-      "commandName": "Project",
-      "commandLineArgs": "--environment Development"
-    }
-  }
-}
