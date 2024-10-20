@@ -1,4 +1,4 @@
-name: build
+name: build-daily
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 
 
 env:
-  DOTNET_VERSION: "8.0.403" # The .NET SDK version to use
+  DOTNET_VERSION: "8.0.403"
 
 jobs:
   build:
@@ -28,8 +28,8 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Run
-        run: dotnet run --project Hackernews.Daily.csproj
-        working-directory: src/Hackernews.Daily/
+        run: dotnet run --project HackerNews.csproj
+        working-directory: src/HackerNews/
         env:
             AppOption__AppPrivateKey: ${{ secrets.AppPrivateKey }}
             AppOption__HacknewsType: "Daily"
