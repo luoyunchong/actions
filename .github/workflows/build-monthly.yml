@@ -7,7 +7,7 @@ on:
 
 
 env:
-  DOTNET_VERSION: "8.0.403"
+  DOTNET_VERSION: "9.0.101"
 
 jobs:
   build:
