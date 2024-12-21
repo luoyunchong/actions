@@ -38,6 +38,12 @@ public class App
 
         Console.WriteLine(filename);
 
+
+        if (File.Exists(filename))
+        {
+            File.Delete(filename);
+        }
+
         await File.WriteAllTextAsync(filename, JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
