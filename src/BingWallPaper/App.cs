@@ -79,6 +79,8 @@ public class App
         {
             imageUrl = $"{url}{imageUrl}";
         }
+        
+        var ultraHighDef = imageUrl?.Replace("_1920x1080.webp", "_UHD.jpg");
 
         var imageWallpaper = $"{url}{imageContent["Image"]?["Wallpaper"]}";
         var mainText = imageContent["QuickFact"]?["MainText"]?.ToString();
@@ -88,6 +90,7 @@ public class App
         return new BingWallPaperInfo(headline,
             title,
             description,
+            ultraHighDef,
             imageUrl,
             imageWallpaper,
             mainText,
@@ -96,12 +99,25 @@ public class App
     }
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="Headline"></param>
+/// <param name="Title"></param>
+/// <param name="Description"></param>
+/// <param name="UltraHighDef">原图(最清晰）</param>
+/// <param name="ImageUrl"></param>
+/// <param name="ImageWallpaper"></param>
+/// <param name="MainText"></param>
+/// <param name="CopyRight"></param>
+/// <param name="QuickFactMainText"></param>
 public record BingWallPaperInfo(
     string? Headline,
     string? Title,
     string? Description,
+    string? UltraHighDef,
     string? ImageUrl,
-    string ImageWallpaper,
+    string? ImageWallpaper,
     string? MainText,
     string? CopyRight,
     string? QuickFactMainText);
