@@ -37,6 +37,7 @@ public class App
         }
 
         Console.WriteLine(filename);
+
         await File.WriteAllTextAsync(filename, JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
@@ -68,17 +69,22 @@ public class App
         var title = imageContent["Title"]?.ToString();
         var description = imageContent["Description"]?.ToString();
         var imageUrl = imageContent["Image"]?["Url"]?.ToString();
+        if (imageUrl != null && !imageUrl.StartsWith("http"))
+        {
+            imageUrl = $"{url}{imageUrl}";
+        }
+
         var imageWallpaper = $"{url}{imageContent["Image"]?["Wallpaper"]}";
         var mainText = imageContent["QuickFact"]?["MainText"]?.ToString();
         var copyright = imageContent["Copyright"]?.ToString();
         var quickFactMainText = imageContent["QuickFact"]?["MainText"]?.ToString();
 
-        return new BingWallPaperInfo(headline, 
-            title, 
-            description, 
-            imageUrl, 
-            imageWallpaper, 
-            mainText, 
+        return new BingWallPaperInfo(headline,
+            title,
+            description,
+            imageUrl,
+            imageWallpaper,
+            mainText,
             copyright,
             quickFactMainText);
     }
