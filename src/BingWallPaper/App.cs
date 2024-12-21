@@ -23,6 +23,7 @@ public class App
         var now = DateTime.Now;
 
         var filename = Path.Combine(
+            Directory.GetCurrentDirectory(),
             _appOption.SavePath,
             now.ToString("yyyy"),
             now.ToString("MM"),
@@ -35,6 +36,7 @@ public class App
             Directory.CreateDirectory(dir);
         }
 
+        Console.WriteLine(filename);
         await File.WriteAllTextAsync(filename, JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
