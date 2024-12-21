@@ -1,0 +1,40 @@
+name: build-weekly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "2 0 * * *"
+
+
+env:
+  DOTNET_VERSION: "9.0.101"
+
+jobs:
+  build:
+    name: build-ubuntu-latest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run
+        run: dotnet run --project BingWallPaper.csproj
+        working-directory: src/BingWallPaper/
+        
+      - name: Commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated"
+          git push

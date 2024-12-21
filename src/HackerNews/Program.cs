@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 
 using IHost host = AppStartup(args);
-var app = host.Services.GetService<App>();
+var app = host.Services.GetRequiredService<App>();
 Log.Logger.Information("Application Starting");
 await app.RunAsync(args);
 Log.Logger.Information("Application End");
@@ -14,10 +14,10 @@ static IHost AppStartup(string[] args)
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((context, services) =>
         {
-            Log.Logger = new LoggerConfiguration() // initiate the logger configuration
-                .ReadFrom.Configuration(context.Configuration) // connect serilog to our configuration folder
-                .Enrich.FromLogContext() //Adds more information to our logs from built in Serilog 
-                .CreateLogger(); //initialise the logger
+            Log.Logger = new LoggerConfiguration() 
+                .ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext() 
+                .CreateLogger();
 
             services.AddTransient<App>();
 
