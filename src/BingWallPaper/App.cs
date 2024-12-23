@@ -79,13 +79,13 @@ public class App
         {
             imageUrl = $"{url}{imageUrl}";
         }
-        
-        var ultraHighDef = imageUrl?.Replace("_1920x1080.webp", "_UHD.jpg");
+
+        var regex =new Regex("id=(.*?)(\\d+x\\d+)(.*?).webp").Match(imageUrl);
+        var ultraHighDef = imageUrl?.Replace(regex.Groups[2].Value, "UHD").Replace(".webp", ".jpg");
 
         var imageWallpaper = $"{url}{imageContent["Image"]?["Wallpaper"]}";
         var mainText = imageContent["QuickFact"]?["MainText"]?.ToString();
         var copyright = imageContent["Copyright"]?.ToString();
-        var quickFactMainText = imageContent["QuickFact"]?["MainText"]?.ToString();
 
         return new BingWallPaperInfo(headline,
             title,
@@ -94,8 +94,7 @@ public class App
             imageUrl,
             imageWallpaper,
             mainText,
-            copyright,
-            quickFactMainText);
+            copyright);
     }
 }
 
@@ -110,7 +109,6 @@ public class App
 /// <param name="ImageWallpaper"></param>
 /// <param name="MainText"></param>
 /// <param name="CopyRight"></param>
-/// <param name="QuickFactMainText"></param>
 public record BingWallPaperInfo(
     string? Headline,
     string? Title,
@@ -119,8 +117,7 @@ public record BingWallPaperInfo(
     string? ImageUrl,
     string? ImageWallpaper,
     string? MainText,
-    string? CopyRight,
-    string? QuickFactMainText);
+    string? CopyRight);
 
 public class AppOption
 {
