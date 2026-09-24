@@ -77,10 +77,13 @@ public class App
         archiveResponse.EnsureSuccessStatusCode();
         var archiveContent = await archiveResponse.Content.ReadAsStringAsync();
 
-        return GetWallPaperFromArchive(archiveContent);
+        return GetWallPaperInfo(content, archiveContent);
     }
 
-    private static BingWallPaperInfo? TryGetWallPaperFromHomePage(string content)
+    internal static BingWallPaperInfo GetWallPaperInfo(string homePageContent, string archiveContent)
+        => TryGetWallPaperFromHomePage(homePageContent) ?? GetWallPaperFromArchive(archiveContent);
+
+    internal static BingWallPaperInfo? TryGetWallPaperFromHomePage(string content)
     {
         var match = HomePageModelRegex.Match(content);
         if (!match.Success || string.IsNullOrWhiteSpace(match.Groups[1].Value))
@@ -121,19 +124,22 @@ public class App
         }
     }
 
-    private static BingWallPaperInfo GetWallPaperFromArchive(string archiveContent)
+    internal static BingWallPaperInfo GetWallPaperFromArchive(string archiveContent)
     {
         var json = JObject.Parse(archiveContent);
         var image = json["images"]?.FirstOrDefault()
             ?? throw new InvalidOperationException("Bing image archive response did not include any images.");
         var imageBaseUrl = image["urlbase"]?.ToString()
             ?? throw new InvalidOperationException("Bing image archive response did not include urlbase.");
-        var headline = image["caption"]?.ToString() ?? image["title"]?.ToString();
-        var title = image["title"]?.ToString();
+        var imageId = GetArchiveImageId(imageBaseUrl);
+        var headline = NullIfWhiteSpace(image["headline"]?.ToString());
+        var title = NullIfWhiteSpace(image["title"]?.ToString()) ?? NullIfWhiteSpace(image["caption"]?.ToString());
         var description = image["desc"]?.ToString();
-        var imageUrl = BuildAbsoluteUrl(image["url"]?.ToString()) ?? BuildAbsoluteUrl($"{imageBaseUrl}_1920x1080.webp");
-        var ultraHighDef = BuildAbsoluteUrl($"{imageBaseUrl}_UHD.jpg");
-        var imageWallpaper = BuildAbsoluteUrl($"{imageBaseUrl}_1920x1200.jpg&rf=LaDigue_1920x1200.jpg");
+        var imageUrl = BuildAbsoluteUrl(image["url"]?.ToString()) ?? BuildArchiveImageUrl(imageId, "1920x1080.webp");
+        var ultraHighDef = BuildArchiveImageUrl(imageId, "UHD.jpg");
+        var imageWallpaper = image["wallpaper"]?.ToString() is { Length: > 0 } wallpaper
+            ? BuildAbsoluteUrl(wallpaper)
+            : BuildArchiveImageUrl(imageId, "1920x1200.jpg", "rf=LaDigue_1920x1200.jpg");
         var copyright = image["copyright"]?.ToString();
 
         return new BingWallPaperInfo(headline,
@@ -142,7 +148,7 @@ public class App
             ultraHighDef,
             imageUrl,
             imageWallpaper,
-            description,
+            null,
             copyright);
     }
 
@@ -156,6 +162,26 @@ public class App
         return value.StartsWith("http", StringComparison.OrdinalIgnoreCase)
             ? value
             : $"{BingBaseUrl}{value}";
+    }
+
+    private static string? NullIfWhiteSpace(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private static string GetArchiveImageId(string imageBaseUrl)
+    {
+        const string marker = "th?id=";
+        var index = imageBaseUrl.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+        return index >= 0
+            ? imageBaseUrl[(index + marker.Length)..]
+            : imageBaseUrl.TrimStart('/');
+    }
+
+    private static string BuildArchiveImageUrl(string imageId, string suffix, string? query = null)
+    {
+        var imageUrl = $"{BingBaseUrl}/th?id={imageId}_{suffix}";
+        return string.IsNullOrWhiteSpace(query)
+            ? imageUrl
+            : $"{imageUrl}&{query}";
     }
 
     private static string? BuildUltraHighDefUrl(string? imageUrl)
