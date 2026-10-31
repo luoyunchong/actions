@@ -1,3 +1,5 @@
+[English](README.en.md) | **简体中文**
+
 # actions
 
 [![](https://badgen.net/badge/icon/RSS/orange?icon=rss&label)](https://rsshub.rssforever.com/github/issue/luoyunchong/actions)
