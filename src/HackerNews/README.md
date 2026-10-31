@@ -1,3 +1,5 @@
+**English** | [简体中文](README.zh-CN.md)
+
 ﻿# HackerNews
 
 [![](https://badgen.net/badge/icon/RSS/orange?icon=rss&label)](https://rsshub.rssforever.com/github/issue/luoyunchong/actions)
