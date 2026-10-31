@@ -1,3 +1,5 @@
+[English](README.en.md) | **简体中文**
+
 ﻿# wallpaper-database
 
 微软必应首页每日一图接口: [https://cn.bing.com/](https://cn.bing.com/)
