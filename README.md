@@ -1,8 +1,8 @@
-[English](README.en.md) | **简体中文**
+**English** | [简体中文](README.zh-CN.md)
 
-# actions
+# Actions
 
 [![](https://badgen.net/badge/icon/RSS/orange?icon=rss&label)](https://rsshub.rssforever.com/github/issue/luoyunchong/actions)
 
-- [ HackerNews 每日/周/月 热搜  ](./src/HackerNews/README.zh-CN.md)
-- [微软必应首页每日一图接口](./src/BingWallPaper/README.md)
+- [Hacker News daily, weekly, and monthly trending posts](./src/HackerNews/README.md)
+- [Microsoft Bing daily homepage image API](./src/BingWallPaper/README.en.md)
